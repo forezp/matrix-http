@@ -19,6 +19,8 @@ public class ClientConfigEntity {
 
     private  Integer httpMaxTotal;
 
+    private Integer connectionTimerRepeat;
+
     public Integer getHttpConnectTimeout() {
         return httpConnectTimeout;
     }
@@ -73,5 +75,13 @@ public class ClientConfigEntity {
 
     public void setHttpMaxTotal(Integer httpMaxTotal) {
         this.httpMaxTotal = httpMaxTotal;
+    }
+
+    public Integer getConnectionTimerRepeat() {
+        return connectionTimerRepeat;
+    }
+
+    public void setConnectionTimerRepeat(Integer connectionTimerRepeat) {
+        this.connectionTimerRepeat = connectionTimerRepeat;
     }
 }

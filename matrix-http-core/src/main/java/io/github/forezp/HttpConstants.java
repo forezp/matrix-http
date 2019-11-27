@@ -20,6 +20,7 @@ public class HttpConstants {
     public static final String HTTPCLIENT_MAX_TOTAL = "httpclient.max.total";
     public static final String HTTPCLIENT_MAX_TOTAL_DEFAULT = "64";
 
+    public static final String HTTPCLIENT_CONNECT_TIMER_REPEAT_ = "httpclient.connect.timer.repeat";
     public static final int CPUS = Math.max( 2, Runtime.getRuntime().availableProcessors() );
 
 
