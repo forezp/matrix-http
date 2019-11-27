@@ -4,11 +4,14 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -27,6 +30,8 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -102,6 +107,12 @@ public class ApacheSyncClientExecutor {
     }
 
 
+    /**
+     * postjson格式的
+     * @param url  请求地址
+     * @param params  请求参数
+     * @param syncCallback  响应回调
+     */
     public void postJson(String url, Object params, SyncCallback syncCallback) {
         url = CommonUtils.decorateUrl(url);
         String value = SerializerExecutor.toJson(params);
@@ -115,14 +126,53 @@ public class ApacheSyncClientExecutor {
     }
 
     /**
+     * 无参数的get请求
+     *
+     * @param url  请求地址地址
+     * @param syncCallback  回调
+     */
+    public void get(String url, SyncCallback syncCallback) {
+        this.get(url, null, syncCallback);
+    }
+
+    /**
+     * get请求，参数放在map里
+     *
+     * @param url 请求地址
+     * @param map 参数map
+     */
+    public void get(String url, Map<String, Object> map, SyncCallback syncCallback) {
+
+        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+        if (map != null) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                pairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));
+            }
+        }
+        try {
+            URIBuilder builder = new URIBuilder(url);
+            builder.setParameters(pairs);
+            HttpGet httpGet = new HttpGet(builder.build());
+            handeleRequest(httpGet, syncCallback);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public void postForm(String url, SyncCallback syncCallback) {
+        this.postForm(url, null, syncCallback);
+    }
+
+    /**
      * 带参数的post请求
      *
-     * @param url
-     * @param map
-     * @return
-     * @throws Exception
+     * @param url 请求diz地址
+     * @param map 请求参数参数
+     * @param syncCallback 回调
      */
-    public void postForm(String url, Map<String, Object> map) throws Exception {
+    public void postForm(String url, Map<String, Object> map, SyncCallback syncCallback) {
         // 1. 声明httppost
         url = CommonUtils.decorateUrl(url);
         HttpPost httpPost = new HttpPost(url);
@@ -138,27 +188,19 @@ public class ApacheSyncClientExecutor {
             }
         }
         // 创建表单的Entity类
-        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(parameters, "UTF-8");
+        UrlEncodedFormEntity entity = null;
+        try {
+            entity = new UrlEncodedFormEntity(parameters, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         // 3. 把封装好的表单实体对象设置到HttpPost中
         httpPost.setEntity(entity);
 
-        // 4. 使用Httpclient发起请求
-        CloseableHttpResponse response = this.httpClient.execute(httpPost);
+        handeleRequest(httpPost, syncCallback);
 
-        // 5. 解析返回数据，封装HttpResult
-        // 5.1状态码
-        int code = response.getStatusLine().getStatusCode();
-        // 5.2 响应体内容
-        String body = null;
-        if (response.getEntity() != null) {
-            body = EntityUtils.toString(response.getEntity(), "UTF-8");
-        }
 
-        HttpResult result = new HttpResult();
-        result.setCode(code);
-        result.setBody(body);
-        return result;
     }
 
     private void handeleRequest(HttpUriRequest httpPost, SyncCallback syncCallback) {
@@ -168,7 +210,9 @@ public class ApacheSyncClientExecutor {
             LOG.info(response.getStatusLine().getStatusCode() + "");
             int code = response.getStatusLine().getStatusCode();
             String res = EntityUtils.toString(response.getEntity(), "UTF-8");
-            syncCallback.completed(code, res);
+            if (syncCallback != null) {
+                syncCallback.completed(code, res);
+            }
             return;
         } catch (IOException e) {
             e.printStackTrace();

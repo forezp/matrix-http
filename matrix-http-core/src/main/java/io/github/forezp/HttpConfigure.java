@@ -116,9 +116,11 @@ public class HttpConfigure {
         }
 
         @Bean
-        public ApacheSyncClientExecutor apacheSyncClientExecutor() throws Exception {
-            ApacheSyncClientExecutor apacheSyncClientExecutor = new ApacheSyncClientExecutor(entity);
-            apacheSyncClientExecutor.initialize();
+        public ApacheSyncClientExecutor apacheSyncClientExecutor(ConnectionKeepAliveStrategy connectionKeepAliveStrategy,
+                                                                 HttpClientConnectionManager httpClientConnectionManager) throws Exception {
+            ApacheSyncClientExecutor apacheSyncClientExecutor =
+                    new ApacheSyncClientExecutor(entity, connectionKeepAliveStrategy, httpClientConnectionManager);
+            apacheSyncClientExecutor.initialize(entity, false);
             return apacheSyncClientExecutor;
         }
     }
