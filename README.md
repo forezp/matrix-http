@@ -75,7 +75,7 @@ public class MatrixHttpExampleApplication {
 	@GetMapping("/test")
 	public String test(){
 
-		apacheAsyncClientExecutor.post("baidu.com", "11", new ApacheAsyncClientExecutor.AsyncCallback() {
+		apacheAsyncClientExecutor.post("baidu.com", "11", new ApacheAsyncClientExecutor.AResonseCallBack() {
 			@Override
 			public void completed(HttpResponse httpResponse) {
 				System.out.println(httpResponse.getEntity().toString());

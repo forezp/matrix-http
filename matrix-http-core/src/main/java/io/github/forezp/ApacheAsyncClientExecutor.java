@@ -46,8 +46,6 @@ public class ApacheAsyncClientExecutor {
             @Override
             public Object call() throws Exception {
                 try {
-
-
                     IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
                             .setIoThreadCount(CPUS * 2)
                             .setConnectTimeout(configEntity.getHttpConnectTimeout())
@@ -85,7 +83,7 @@ public class ApacheAsyncClientExecutor {
     }
 
 
-    public void post(String url, Object object, AsyncCallback callback) {
+    public void post(String url, Object object, AResonseCallBack callback) {
         if (!url.startsWith("http://")) {
             url = "http://" + url;
         }
@@ -97,10 +95,10 @@ public class ApacheAsyncClientExecutor {
         httpPost.addHeader("content-type", "application/json;charset=utf-8");
         httpPost.setEntity(entity);
 
-        DefaultHttpAsyncCallback httpAsyncCallback = new DefaultHttpAsyncCallback();
-        httpAsyncCallback.setHttpPost(httpPost);
-        httpAsyncCallback.setAsyncCallback(callback);
-        httpAsyncClient.execute(httpPost, httpAsyncCallback);
+        DefaultHttpAResonseCallBack httpAResonseCallBack = new DefaultHttpAResonseCallBack();
+        httpAResonseCallBack.setHttpPost(httpPost);
+        httpAResonseCallBack.setAResonseCallBack(callback);
+        httpAsyncClient.execute(httpPost, httpAResonseCallBack);
     }
 
     public void post(String url, Object object) {
@@ -108,23 +106,23 @@ public class ApacheAsyncClientExecutor {
     }
 
 
-    public class DefaultHttpAsyncCallback implements FutureCallback<HttpResponse> {
+    public class DefaultHttpAResonseCallBack implements FutureCallback<HttpResponse> {
         private HttpPost httpPost;
 
-        private AsyncCallback asyncCallback;
+        private AResonseCallBack aResonseCallBack;
 
         public void setHttpPost(HttpPost httpPost) {
             this.httpPost = httpPost;
         }
 
-        public void setAsyncCallback(AsyncCallback asyncCallback) {
-            this.asyncCallback = asyncCallback;
+        public void setAResonseCallBack(AResonseCallBack aResonseCallBack) {
+            this.aResonseCallBack = aResonseCallBack;
         }
 
         @Override
         public void completed(HttpResponse httpResponse) {
-            if (asyncCallback != null) {
-                asyncCallback.completed(httpResponse);
+            if (aResonseCallBack != null) {
+                aResonseCallBack.completed(httpResponse);
             }
             httpPost.reset();
         }
@@ -132,8 +130,8 @@ public class ApacheAsyncClientExecutor {
         @Override
         public void failed(Exception e) {
 
-            if (asyncCallback != null) {
-                asyncCallback.failed(e);
+            if (aResonseCallBack != null) {
+                aResonseCallBack.failed(e);
             }
             httpPost.reset();
             LOG.error("Monitor web service invoke failed, url={}", httpPost.getURI(), e);
@@ -148,7 +146,7 @@ public class ApacheAsyncClientExecutor {
     }
 
 
-    public interface AsyncCallback {
+    public interface AResonseCallBack {
         void completed(HttpResponse httpResponse);
 
         void failed(Exception e);
