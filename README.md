@@ -6,9 +6,10 @@
 
 ## 这个项目干嘛的?
 
-httpclient创建和管理的工具类
+httpclient创建和管理的工具类。
 
 ## 怎么用
+
 
 
 ### 添加依赖：
@@ -59,38 +60,40 @@ httpclient的配置如下，如果不填，即为默认值：
 
 ```
 
-@SpringBootApplication
-@RestController
-public class MatrixHttpExampleApplication {
+   @Autowired
+    ApacheAsyncClientExecutor apacheAsyncClientExecutor;
+    @Autowired
+    ApacheSyncClientExecutor apacheSyncClientExecutor;
 
-	public static void main(String[] args) {
-		SpringApplication.run(MatrixHttpExampleApplication.class, args);
-	}
+    @GetMapping("/test")
+    public String test() {
 
-	@Autowired
-	ApacheAsyncClientExecutor apacheAsyncClientExecutor;
-	@Autowired
-	ApacheSyncClientExecutor apacheSyncClientExecutor;
+        apacheSyncClientExecutor.get("https://www.baidu.com", new ResonseCallBack() {
+            @Override
+            public void completed(int httpCode, String result) {
+                System.out.println(result);
+            }
 
-	@GetMapping("/test")
-	public String test(){
+            @Override
+            public void failed(Exception e) {
 
-		apacheAsyncClientExecutor.post("baidu.com", "11", new ApacheAsyncClientExecutor.AResonseCallBack() {
-			@Override
-			public void completed(HttpResponse httpResponse) {
-				System.out.println(httpResponse.getEntity().toString());
-			}
+            }
+        });
+        return "ok";
+    }
 
-			@Override
-			public void failed(Exception e) {
-				e.printStackTrace();
-			}
-		});
-		return "ok";
-	}
+    @GetMapping("/test2")
+    public Keyswords testJieba() {
+        String url = "http://fangzhipeng.com/test";
+        Map<String, Object> paras = new HashMap<>();
+        paras.put("title", "詹姆斯带队湖人登第一");
+        paras.put("content", "詹姆斯给力，浓眉给力");
+        ResonseCallBack.DEAULT deault = new ResonseCallBack.DEAULT();
+        apacheSyncClientExecutor.postForm(url, paras, deault);
+        Keyswords keyswords = JSON.parseObject(deault.getData(), Keyswords.class);
+        System.out.println(JSON.toJSONString(keyswords));
+        return keyswords;
+    }
 
-
-
-}
 
 ```

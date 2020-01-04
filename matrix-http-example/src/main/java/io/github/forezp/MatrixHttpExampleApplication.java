@@ -43,7 +43,7 @@ public class MatrixHttpExampleApplication {
 
     @GetMapping("/test2")
     public Keyswords testJieba() {
-        String url = "http://jieba.fangzhipeng.com/test/jieba";
+        String url = "http://fangzhipeng.com/test";
         Map<String, Object> paras = new HashMap<>();
         paras.put("title", "詹姆斯带队湖人登第一");
         paras.put("content", "詹姆斯给力，浓眉给力");
