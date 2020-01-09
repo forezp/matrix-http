@@ -7,19 +7,21 @@ public class ClientConfigEntity {
 
     private Integer httpConnectTimeout;
 
-    private  Integer httpRequestTimeout;
+    private Integer httpRequestTimeout;
 
-    private   Integer httpSocketTimeout;
+    private Integer httpSocketTimeout;
 
-    private  Integer httpSendBufSize;
+    private Integer httpSendBufSize;
 
-    private  Integer httpRcvBufSize;
+    private Integer httpRcvBufSize;
 
-    private  Integer httpBackLogSize;
+    private Integer httpBackLogSize;
 
-    private  Integer httpMaxTotal;
+    private Integer httpMaxTotal;
 
     private Integer connectionTimerRepeat;
+
+    private Boolean httpsEnable;
 
     public Integer getHttpConnectTimeout() {
         return httpConnectTimeout;
@@ -83,5 +85,13 @@ public class ClientConfigEntity {
 
     public void setConnectionTimerRepeat(Integer connectionTimerRepeat) {
         this.connectionTimerRepeat = connectionTimerRepeat;
+    }
+
+    public Boolean getHttpsEnable() {
+        return httpsEnable;
+    }
+
+    public void setHttpsEnable(Boolean httpsEnable) {
+        this.httpsEnable = httpsEnable;
     }
 }

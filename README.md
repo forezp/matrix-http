@@ -82,14 +82,14 @@ httpclient的配置如下，如果不填，即为默认值：
        }
    
        @Autowired
-       ApacheAsyncClientExecutor apacheAsyncClientExecutor;
+       ApacheAsyncClientExecutor httpAsyncClientExecutor;
        @Autowired
-       ApacheSyncClientExecutor apacheSyncClientExecutor;
+       ApacheSyncClientExecutor httpClientExecutor;
    
        @GetMapping("/test")
        public String test() {
    
-           apacheSyncClientExecutor.get("https://www.baidu.com", new ResonseCallBack() {
+           httpClientExecutor.get("https://www.baidu.com", new ResonseCallBack() {
                @Override
                public void completed(int httpCode, String result) {
                    System.out.println(result);
@@ -110,7 +110,7 @@ httpclient的配置如下，如果不填，即为默认值：
            paras.put("title", "詹姆斯带队湖人登第一");
            paras.put("content", "詹姆斯给力，浓眉给力");
            ResonseCallBack.DEAULT deault = new ResonseCallBack.DEAULT();
-           apacheSyncClientExecutor.postForm(url, paras, deault);
+           httpClientExecutor.postForm(url, paras, deault);
            Keyswords keyswords = JSON.parseObject(deault.getData(), Keyswords.class);
            System.out.println(JSON.toJSONString(keyswords));
            return keyswords;

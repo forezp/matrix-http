@@ -21,11 +21,12 @@ public class HttpConstants {
     public static final String HTTPCLIENT_MAX_TOTAL_DEFAULT = "64";
 
     public static final String HTTPCLIENT_CONNECT_TIMER_REPEAT_ = "httpclient.connect.timer.repeat";
-    public static final int CPUS = Math.max( 2, Runtime.getRuntime().availableProcessors() );
+    public static final int CPUS = Math.max(2, Runtime.getRuntime().availableProcessors());
 
 
-    public static final String HTTP_SYNC_ENABLE="http.sync.enable";
-    public static final String HTTP_ASYNC_ENABLE="http.async.enable";
-    public static final String TRUE="true";
+    public static final String HTTP_SYNC_ENABLE = "http.sync.enable";
+    public static final String HTTP_ASYNC_ENABLE = "http.async.enable";
+    public static final String HTTPS_ENABLE = "https.enable";
+    public static final String TRUE = "true";
 
 }

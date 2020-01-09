@@ -1,22 +1,14 @@
 package io.github.forezp;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
@@ -27,31 +19,30 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by forezp on 2019/5/29.
  */
-public class ApacheSyncClientExecutor extends AbstractClientExcutor {
-    private static final Logger LOG = LoggerFactory.getLogger(ApacheSyncClientExecutor.class);
+public class HttpClientExecutor extends AbstractClientExcutor {
+    private static final Logger LOG = LoggerFactory.getLogger(HttpClientExecutor.class);
 
     private CloseableHttpClient httpSyncClient;
     private ClientConfigEntity configEntity;
     private ConnectionKeepAliveStrategy connectionKeepAliveStrategy;
     private HttpClientConnectionManager httpClientConnectionManager;
+    private HttpRequestRetryHandler httpRequestRetryHandler;
 
-    public ApacheSyncClientExecutor(ClientConfigEntity configEntity,
-                                    ConnectionKeepAliveStrategy connectionKeepAliveStrategy,
-                                    HttpClientConnectionManager httpClientConnectionManager) {
+    public HttpClientExecutor(ClientConfigEntity configEntity,
+                              ConnectionKeepAliveStrategy connectionKeepAliveStrategy,
+                              HttpClientConnectionManager httpClientConnectionManager,
+                              HttpRequestRetryHandler httpRequestRetryHandler) {
         this.configEntity = configEntity;
         this.connectionKeepAliveStrategy = connectionKeepAliveStrategy;
         this.httpClientConnectionManager = httpClientConnectionManager;
+        this.httpRequestRetryHandler = httpRequestRetryHandler;
     }
 
     protected void initialize() throws Exception {
@@ -59,7 +50,7 @@ public class ApacheSyncClientExecutor extends AbstractClientExcutor {
     }
 
     protected void initialize(ClientConfigEntity configEntity) throws Exception {
-        initialize(configEntity, false);
+        initialize(configEntity, configEntity.getHttpsEnable());
     }
 
     protected void initialize(ClientConfigEntity configEntity, boolean https) throws Exception {
@@ -92,6 +83,7 @@ public class ApacheSyncClientExecutor extends AbstractClientExcutor {
             clientBuilder.setSSLSocketFactory(sslConnectionSocketFactory);
             clientBuilder.setConnectionManager(httpClientConnectionManager);
             clientBuilder.setKeepAliveStrategy(connectionKeepAliveStrategy);
+            clientBuilder.setRetryHandler(httpRequestRetryHandler);
         }
 
         httpSyncClient = clientBuilder.build();

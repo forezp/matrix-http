@@ -24,14 +24,14 @@ import static io.github.forezp.HttpConstants.CPUS;
 /**
  * Created by forezp on 2019/5/29.
  */
-public class ApacheAsyncClientExecutor {
-    private static final Logger LOG = LoggerFactory.getLogger(ApacheAsyncClientExecutor.class);
+public class HttpAsyncClientExecutor {
+    private static final Logger LOG = LoggerFactory.getLogger(HttpAsyncClientExecutor.class);
 
     private CloseableHttpAsyncClient httpAsyncClient;
 
     private ClientConfigEntity clientConfigEntity;
 
-    public ApacheAsyncClientExecutor(ClientConfigEntity clientConfigEntity) {
+    public HttpAsyncClientExecutor(ClientConfigEntity clientConfigEntity) {
         this.clientConfigEntity = clientConfigEntity;
     }
 
