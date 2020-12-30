@@ -52,6 +52,4 @@ public class MatrixHttpExampleApplication {
         System.out.println(JSON.toJSONString(keyswords));
         return keyswords;
     }
-
-
 }

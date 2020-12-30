@@ -4,13 +4,11 @@ package io.github.forezp;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
@@ -18,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 参考https://blog.csdn.net/zzq900503/article/details/89711999
+ */
 public abstract class AbstractClientExcutor {
 
     abstract void handeleRequest(HttpUriRequest httpRequest, Map<String, String> headers, ResonseCallBack ResonseCallBack);
@@ -163,6 +164,44 @@ public abstract class AbstractClientExcutor {
         }
 
         handeleRequest(httpPut, headers, ResonseCallBack);
+
+    }
+
+
+    public void deleteForm(String url, ResonseCallBack ResonseCallBack) {
+        this.deleteForm(url, null, null, ResonseCallBack);
+    }
+
+    public void deleteForm(String url, Map<String, Object> params, ResonseCallBack ResonseCallBack) {
+        this.deleteForm(url, params, null, ResonseCallBack);
+    }
+
+    public void deleteForm(String url, Map<String, Object> params, Map<String, String> headers, ResonseCallBack ResonseCallBack) {
+        // 1. 声明httpput
+        url = CommonUtils.decorateUrl(url);
+        HttpDeleteWithBody httpDelete = new HttpDeleteWithBody(url);
+        // 2.封装请求参数，请求数据是表单
+        if (params != null) {
+            // 声明封装表单数据的容器
+            List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                // 封装请求参数到容器中
+                parameters.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));
+            }
+            // 创建表单的Entity类
+            UrlEncodedFormEntity entity = null;
+            try {
+                entity = new UrlEncodedFormEntity(parameters, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            // 3. 把封装好的表单实体对象设置到HttpPost中
+
+            httpDelete.setEntity(entity);
+
+        }
+
+        handeleRequest(httpDelete, headers, ResonseCallBack);
 
     }
 
