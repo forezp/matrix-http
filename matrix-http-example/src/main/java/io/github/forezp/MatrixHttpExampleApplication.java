@@ -52,4 +52,15 @@ public class MatrixHttpExampleApplication {
         System.out.println(JSON.toJSONString(keyswords));
         return keyswords;
     }
+
+    @GetMapping("/test3")
+    public String deleteNacosNs() {
+        String url = "http://:8848/nacos/v1/console/namespaces";
+        Map<String, Object> paras = new HashMap<>();
+        paras.put("namespaceId", "martrix");
+        ResonseCallBack.DEAULT deault = new ResonseCallBack.DEAULT();
+        httpClientExecutor.deleteForm(url, paras, deault);
+        System.out.println(deault.getData());
+        return "ok";
+    }
 }
