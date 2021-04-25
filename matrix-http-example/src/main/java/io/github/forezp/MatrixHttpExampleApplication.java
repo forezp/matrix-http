@@ -67,7 +67,7 @@ public class MatrixHttpExampleApplication {
 
     @GetMapping("/upload")
     public String upload() {
-        File file = new File("/Users/nickelfang/Desktop/WX20210425-114003@2x.png");
+        File file = new File("/Users/dde/Desktop/WX20210425-114003@2x.png");
         if (!file.exists()) {
             return "fail";
         }
