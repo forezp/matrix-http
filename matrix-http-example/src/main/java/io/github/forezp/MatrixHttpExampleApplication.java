@@ -72,8 +72,7 @@ public class MatrixHttpExampleApplication {
             return "fail";
         }
         HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("key", "1927@.x");
-        httpClientExecutor.upload("http://122.51.35.239:8083/upload", file, paramMap, new ResonseCallBack() {
+        httpClientExecutor.upload("http:///upload", file, paramMap, new ResonseCallBack() {
             @Override
             public void completed(int httpCode, String result) {
                 System.out.println(httpCode + result);
