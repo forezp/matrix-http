@@ -83,12 +83,6 @@ public class MatrixHttpExampleApplication {
                 System.out.println(e.getMessage());
             }
         });
-//        HashMap<String, Object> paramMap = new HashMap<>();
-//        paramMap.put("file", file);
-//        paramMap.put("key", "1927@.x");
-//        String result = HttpUtil.post("http://122.51.35.239:8083/upload", paramMap);
-//        result = result.replace("上传成功", "").replace("\n", "").replace("\r", "");
-//        result = result.trim();
         return "ok";
     }
 }
