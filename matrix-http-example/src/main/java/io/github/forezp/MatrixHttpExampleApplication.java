@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,6 +62,34 @@ public class MatrixHttpExampleApplication {
         ResonseCallBack.DEAULT deault = new ResonseCallBack.DEAULT();
         httpClientExecutor.deleteForm(url, paras, deault);
         System.out.println(deault.getData());
+        return "ok";
+    }
+
+    @GetMapping("/upload")
+    public String upload() {
+        File file = new File("/Users/nickelfang/Desktop/WX20210425-114003@2x.png");
+        if (!file.exists()) {
+            return "fail";
+        }
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("key", "1927@.x");
+        httpClientExecutor.upload("http://122.51.35.239:8083/upload", file, paramMap, new ResonseCallBack() {
+            @Override
+            public void completed(int httpCode, String result) {
+                System.out.println(httpCode + result);
+            }
+
+            @Override
+            public void failed(Exception e) {
+                System.out.println(e.getMessage());
+            }
+        });
+//        HashMap<String, Object> paramMap = new HashMap<>();
+//        paramMap.put("file", file);
+//        paramMap.put("key", "1927@.x");
+//        String result = HttpUtil.post("http://122.51.35.239:8083/upload", paramMap);
+//        result = result.replace("上传成功", "").replace("\n", "").replace("\r", "");
+//        result = result.trim();
         return "ok";
     }
 }

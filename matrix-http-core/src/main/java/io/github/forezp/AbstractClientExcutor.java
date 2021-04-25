@@ -1,15 +1,22 @@
 package io.github.forezp;
 
 
+import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
+import org.springframework.util.CollectionUtils;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -200,9 +207,35 @@ public abstract class AbstractClientExcutor {
             httpDelete.setEntity(entity);
 
         }
-
         handeleRequest(httpDelete, headers, ResonseCallBack);
-
     }
 
+
+    public void upload(String url, File file, ResonseCallBack resonseCallBack) {
+        upload(url, file, null, null, resonseCallBack);
+    }
+
+    public void upload(String url, File file, Map<String, Object> params, ResonseCallBack resonseCallBack) {
+        upload(url, file, params, null, resonseCallBack);
+    }
+
+    public void upload(String url, File file, Map<String, Object> params, Map<String, String> headers, ResonseCallBack resonseCallBack) {
+        url = CommonUtils.decorateUrl(url);
+        HttpPost httpPost = new HttpPost(url);
+        // 把文件转换成流对象FileBody
+        FileBody fileBody = new FileBody(file);
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.addPart("file", fileBody);
+        if (!CollectionUtils.isEmpty(params)) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                builder.addTextBody(entry.getKey(), entry.getValue().toString());
+            }
+        }
+        HttpEntity reqEntity = builder.build();
+        httpPost.setEntity(reqEntity);
+        handeleRequest(httpPost, headers, resonseCallBack);
+    }
 }
+
+
+
