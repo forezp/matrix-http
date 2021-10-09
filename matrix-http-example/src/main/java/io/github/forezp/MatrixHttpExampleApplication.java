@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
@@ -65,13 +66,14 @@ public class MatrixHttpExampleApplication {
         return "ok";
     }
 
-    @GetMapping("/upload")
+    @RequestMapping("/upload")
     public String upload() {
         File file = new File("/Users/dde/Desktop/WX20210425-114003@2x.png");
         if (!file.exists()) {
             return "fail";
         }
         HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("key", "ewee");
         httpClientExecutor.upload("http:///upload", file, paramMap, new ResonseCallBack() {
             @Override
             public void completed(int httpCode, String result) {

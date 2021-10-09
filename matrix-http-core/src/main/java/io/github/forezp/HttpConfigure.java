@@ -184,9 +184,10 @@ public class HttpConfigure {
 
         @Bean
         public HttpClientExecutor httpClientExecutor(ConnectionKeepAliveStrategy connectionKeepAliveStrategy,
-                                                     HttpClientConnectionManager httpClientConnectionManager, HttpRequestRetryHandler httpRequestRetryHandler) throws Exception {
-            HttpClientExecutor httpClientExecutor =
-                    new HttpClientExecutor(entity, connectionKeepAliveStrategy, httpClientConnectionManager, httpRequestRetryHandler);
+                                                     HttpClientConnectionManager httpClientConnectionManager,
+                                                     HttpRequestRetryHandler httpRequestRetryHandler) throws Exception {
+            HttpClientExecutor httpClientExecutor = new HttpClientExecutor(entity, connectionKeepAliveStrategy,
+                    httpClientConnectionManager, httpRequestRetryHandler);
             httpClientExecutor.initialize(entity);
             return httpClientExecutor;
         }

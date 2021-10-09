@@ -70,7 +70,6 @@ public class HttpClientExecutor extends AbstractClientExcutor {
                 public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
                     return true;
                 }
-
             }).build();
             HostnameVerifier hostnameVerifier = new HostnameVerifier() {
                 @Override
@@ -79,13 +78,17 @@ public class HttpClientExecutor extends AbstractClientExcutor {
                 }
             };
             SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
-
             clientBuilder.setSSLSocketFactory(sslConnectionSocketFactory);
+        }
+        if (httpClientConnectionManager != null) {
             clientBuilder.setConnectionManager(httpClientConnectionManager);
+        }
+        if (connectionKeepAliveStrategy != null) {
             clientBuilder.setKeepAliveStrategy(connectionKeepAliveStrategy);
+        }
+        if (httpRequestRetryHandler != null) {
             clientBuilder.setRetryHandler(httpRequestRetryHandler);
         }
-
         httpSyncClient = clientBuilder.build();
 
         LOG.info("Create apache sync client with {} successfully", https ? "https mode" : "http mode");
@@ -106,7 +109,6 @@ public class HttpClientExecutor extends AbstractClientExcutor {
                 }
             }
             response = httpSyncClient.execute(httpRequest);
-            LOG.info(response.getStatusLine().getStatusCode() + "");
             int code = response.getStatusLine().getStatusCode();
             String res = EntityUtils.toString(response.getEntity(), "UTF-8");
             if (resonseCallBack != null) {
@@ -117,6 +119,7 @@ public class HttpClientExecutor extends AbstractClientExcutor {
             e.printStackTrace();
             resonseCallBack.failed(e);
         }
+        //TODO CloseableHttpResponse不需要被关闭？https://blog.csdn.net/cg_Amaz1ng/article/details/104879658
         if (response != null) {
             try {
                 EntityUtils.consume(response.getEntity());
