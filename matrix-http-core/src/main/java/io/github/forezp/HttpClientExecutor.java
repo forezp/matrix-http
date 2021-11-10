@@ -1,5 +1,6 @@
 package io.github.forezp;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
@@ -117,10 +118,13 @@ public class HttpClientExecutor extends AbstractClientExcutor {
         }
         int code = response.getStatusLine().getStatusCode();
         String res = null;
-        try {
-            res = EntityUtils.toString(response.getEntity(), "UTF-8");
-        } catch (IOException e) {
-            e.printStackTrace();
+        HttpEntity httpEntity=response.getEntity();
+        if(httpEntity!=null) {
+            try {
+                res = EntityUtils.toString(response.getEntity(), "UTF-8");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         if (resonseCallBack != null) {
             resonseCallBack.completed(code, res);
