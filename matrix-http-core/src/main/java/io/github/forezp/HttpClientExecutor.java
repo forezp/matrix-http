@@ -101,24 +101,31 @@ public class HttpClientExecutor extends AbstractClientExcutor {
 
     protected void handeleRequest(HttpUriRequest httpRequest, Map<String, String> headers, ResonseCallBack resonseCallBack) {
         CloseableHttpResponse response = null;
+
+        if (headers != null) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                // 封装请求参数到容器中
+                httpRequest.addHeader(entry.getKey(), entry.getValue());
+            }
+        }
         try {
-            if (headers != null) {
-                for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    // 封装请求参数到容器中
-                    httpRequest.addHeader(entry.getKey(), entry.getValue());
-                }
-            }
             response = httpSyncClient.execute(httpRequest);
-            int code = response.getStatusLine().getStatusCode();
-            String res = EntityUtils.toString(response.getEntity(), "UTF-8");
-            if (resonseCallBack != null) {
-                resonseCallBack.completed(code, res);
-            }
-            return;
         } catch (IOException e) {
             e.printStackTrace();
             resonseCallBack.failed(e);
+            return;
         }
+        int code = response.getStatusLine().getStatusCode();
+        String res = null;
+        try {
+            res = EntityUtils.toString(response.getEntity(), "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (resonseCallBack != null) {
+            resonseCallBack.completed(code, res);
+        }
+
         //TODO CloseableHttpResponse不需要被关闭？https://blog.csdn.net/cg_Amaz1ng/article/details/104879658
         if (response != null) {
             try {
